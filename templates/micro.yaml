@@ -1,0 +1,41 @@
+#apiVersion: argoproj.io/v1alpha1
+#kind: ApplicationSet
+#metadata:
+#  name: example-applicationset
+#  namespace: argocd
+#spec:
+#  generators:
+#    - list:
+#        elements:
+#          - cluster: staging
+#            url: https://kubernetes.default.svc
+#            values:
+#              app: myApp1
+#              environment: staging
+#              cluster: stg
+#          - cluster: production
+#            url: https://kubernetes.default.svc
+#            values:
+#              app: myApp2
+#              cluster: prod
+#              environment: production
+#  template:
+#    metadata:
+#      name: '{{values.app}}-{{values.cluster}}'
+#    spec:
+#      project: default
+#      source:
+#        repoURL: 'https://myrepo.git'
+#        targetRevision: HEAD
+#        path: '{{values.environment}}'
+#      destination:
+#        server: '{{`{{url}}`}}'
+#        namespace: 'default'
+#  templatePatch:
+#    - patch: |
+#        spec:
+#          ignoreDifferences:
+#            - group: apps
+#              kind: Deployment
+#              jsonPointers:
+#                - /spec/template/spec/containers/0/image

@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: my-application-set
+  namespace: argocd
+spec:
+  generators:
+  - list:
+      elements:
+        - cluster: development
+          url: https://kubernetes.default.svc
+          valueFiles:
+            - values.dev.yaml
+        - cluster: production
+          url: https://kubernetes.default.svc
+          valueFiles:
+            - values.prod.yaml
+  template:
+    metadata:
+      name: '{{.cluster}}-my-application'
+    spec:
+      project: "default"
+      source:
+        repoURL: 'https://github.com/Patrick1982/helm2.git'
+        targetRevision: HEAD
+        path: helm-chart
+        helm:
+          valueFiles:
+            - values.dev.yaml
+      destination:
+        server: '{{.url}}'
+        namespace: 'default'
+

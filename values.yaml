@@ -1,0 +1,9 @@
+name: test
+
+suffix: ""
+
+ignoreDifferences2: |
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+      - /spec/template/spec/containers/0/image
